@@ -14,7 +14,7 @@ const UserView = ({ user, onClose }) => {
     <div className="view_row"><strong>{t("dashboard-table-r")}:</strong> 
       <span className={`role_badge ${user.role.toLowerCase()}`}>{user.role}</span>
     </div>
-    <button className="close_btn" onClick={onClose}>{t("close")}</button>
+    <button className="close_btn" onClick={onClose}>{t("close")} </button>
   </div>
 
 );

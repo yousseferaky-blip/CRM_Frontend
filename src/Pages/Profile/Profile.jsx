@@ -1,20 +1,75 @@
-import html2canvas from 'html2canvas';
-import './Profile.css'
-import { User, Briefcase, CheckCircle2 } from "lucide-react";
-import jsPDF from 'jspdf';
+import  "./Profile.css";
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../Context/UserContext";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
+import { Briefcase, CheckCircle2, Loader2, User } from "lucide-react";
 
 const Profile = () => {
-    const user = JSON.parse(localStorage.getItem("crm_current_user"));
-    const getTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    const getDeals = JSON.parse(localStorage.getItem("deals")) || [];
+  const { user } = useContext(AuthContext);
+  const [tasks, setTasks] = useState([]);
+  const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    const TaskEmployee = getTasks.filter((task) => task?.employeeId === user?.id?.toString());
-    const DealEmployee = getDeals.filter((deal) => deal?.employeeId === user?.id?.toString());
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [taskSnap, dealSnap] = await Promise.all([
+        getDocs(collection(db, "tasks")),
+        getDocs(collection(db, "deals")),
+      ]);
 
-    const completed = TaskEmployee.filter(statue => statue?.status === "won").length
-    const progres = Math.round((completed / TaskEmployee.length) * 100);
+      const allTasks = taskSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      const allDeals = dealSnap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      let filteredTasks = [];
+      let filteredDeals = [];
+
+      if (user.role === "client") {
+        filteredTasks = allTasks.filter((task) => task.clientId === user.id);
+        filteredDeals = allDeals.filter((deal) => deal.clientId === user.id);
+      } else if (user.role === "employee") {
+        filteredTasks = allTasks.filter((task) =>
+          Array.isArray(task.employeeId)
+            ? task.employeeId.includes(user.id)
+            : task.employeeId === user.id
+        );
+        filteredDeals = allDeals.filter((deal) =>
+          Array.isArray(deal.employeeId)
+            ? deal.employeeId.includes(user.id)
+            : deal.employeeId === user.id
+        );
+      }
+
+      setTasks(filteredTasks);
+      setDeals(filteredDeals);
+    } catch (err) {
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user) fetchData();
+  }, [user]);
+
+  if (loading) return <Loader2 />;
+
+    const completedD = deals.filter(deal => deal?.status === "won").length;
+    const progresD = deals.length > 0 ? Math.round((completedD / deals.length) * 100) : 0;
     
-    const handleDownloadPDF = () => {
+    const completedT = tasks.filter(task => task?.status === "won").length;
+    const progresT = deals.length > 0 ? Math.round((completedT / deals.length) * 100) : 0;
+
+ const handleDownloadPDF = () => {
     const input = document.getElementById("report-content");
 
     html2canvas(input, { scale: 2 }).then((canvas) => {
@@ -46,33 +101,34 @@ const Profile = () => {
     });
 };
 
-    return (
-        <section id="report-content" className="profile">
+  return (
+    <section id="report-content" className="profile">
 
-            <div className="profile-header">
-                <h1>Profile Overview</h1>
-                <button onClick={handleDownloadPDF} className="pdf-button">Download PDF</button>
-            </div>
+        <div className="profile-header">
+            <h1>Profile Overview</h1>
+            <button onClick={handleDownloadPDF} className="pdf-button">Download PDF</button>
+        </div>
 
+       <div className="profile-card">
+            <h2 className="section-title">
+                <User size={20} /> User Info
+            </h2>
+            <p><strong className='strong'>Name:</strong> {user.name}</p>
+            <p><strong className='strong'>Email:</strong> {user.email}</p>
+            <p><strong className='strong'>Role:</strong> {user.role}</p>
+            <p><strong className='strong'>Phone:</strong> {user.number}</p>
+            <p><strong className='strong'>Total Tasks:</strong> {tasks.length}</p>
+            <p><strong className='strong'>Total Deals:</strong> {deals.length}</p>
+        </div>
 
-            <div className="profile-card">
-                <h2 className="section-title">
-                    <User size={20} /> User Info
-                </h2>
-                <p><strong className='strong'>Name:</strong> {user.name}</p>
-                <p><strong className='strong'>Email:</strong> {user.email}</p>
-                <p><strong className='strong'>Role:</strong> {user.role}</p>
-                <p><strong className='strong'>Phone:</strong> {user.number}</p>
-                <p><strong className='strong'>Total Tasks:</strong> {TaskEmployee.length}</p>
-                <p><strong className='strong'>Total Deals:</strong> {DealEmployee.length}</p>
-            </div>
+      <hr />
 
-            <div className="profile-section">
+        <div className="profile-section">
                 <h2 className="section-title">
                     <Briefcase size={20} /> Deals
                 </h2>
                 <div className="card-list">
-                    {DealEmployee.map((deal) => (
+                    {deals.map((deal) => (
                         <div className="card" key={deal.id}>
                             <h3>{deal.title}</h3>
                             <p><strong>Value:</strong> {deal.value}</p>
@@ -86,22 +142,25 @@ const Profile = () => {
                         </div>
                     ))}
                 </div>
-            </div>
-
-            <div className="profile-section">
                 <h2 className="section-title">
-                    <CheckCircle2 size={20} /> Tasks
+                    <CheckCircle2 size={20} /> Deals
                 </h2>
 
                 <div className="progress-bar">
-                    <h2>Task Completion</h2>
-                    <div style={{ width: `${progres}%` }}>{progres}%</div>
+                    <h2>Deal Completion</h2>
+                    <div style={{ width: `${progresD}%` }}>{progresD}%</div>
                 </div>
+            </div>
 
+
+     
+
+            <div className="profile-section">
+                
 
                 <div className="card-list">
 
-                    {TaskEmployee.map((task) => (
+                    {tasks.map((task) => (
                         <div className="card" key={task.id}>
                             <h3>{task.title}</h3>
                             <p><strong>Description:</strong> {task.dis}</p>
@@ -121,10 +180,19 @@ const Profile = () => {
                         </div>
                     ))}
                 </div>
+                <h2 className="section-title">
+                    <CheckCircle2 size={20} /> Tasks
+                </h2>
+
+                <div className="progress-bar">
+                    <h2>Task Completion</h2>
+                    <div style={{ width: `${progresT}%` }}>{progresT}%</div>
+                </div>
             </div>
 
-        </section>
-    );
+
+    </section>
+  );
 };
 
 export default Profile;

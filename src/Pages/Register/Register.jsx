@@ -5,7 +5,14 @@ import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import bcrypt from 'bcryptjs'
 import { useTranslation } from 'react-i18next'
-
+import { db } from "../../firebase"; 
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc
+} from "firebase/firestore";
 const Register = () => {
     const [active, setActive] = useState(false)
     const [name, setName] = useState("");
@@ -15,52 +22,68 @@ const Register = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
 
-    const handleRegister = (e) =>{
-        e.preventDefault()
-        const users = JSON.parse(localStorage.getItem("crm_users")) || []
-        // Check Exist Email
-        const existUser = users.find((user)=>user.email === email)
-        if(existUser){
-            toast.error("Email Already Exist")
-            return
-        }
-        // Check  Number Phone
-        if(number.length !== 11 ){
-            toast.error("رقم الهاتف غير صحيح، يجب أن يتكون من 11 رقمًا");
-            return
-        }
-        // Check Email
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            toast.error("Please enter a valid email address");
-            return;
-        }
-        // Check Password
-        if (password.length < 7 ){
-            toast.warning("Password must be at least 7  numbers");
-            return;
-        }
-        // Check Name
-        if (name.length < 3 ){
-            toast.warning("Name must be at least 3 characters");
-            return;
-        }
-        // Hash Password
-        const hashedPassword = bcrypt.hashSync(password,10)
-        // Add User
-        const newUser = {
-            id: Date.now(),
-            name,
-            email,
-            number,
-            password:hashedPassword,
-            role: "client"
-        }
-        users.push(newUser)
-        localStorage.setItem("crm_users",JSON.stringify(users))
-        toast.success("Create Success")
-        navigate("/login")
+    const handleRegister = async (e) => {
+    e.preventDefault();
+
+    // التحقق من رقم الهاتف
+    if (number.length !== 11) {
+      toast.error("رقم الهاتف غير صحيح، يجب أن يتكون من 11 رقمًا");
+      return;
     }
+
+    // التحقق من الإيميل
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    // التحقق من الباسورد
+    if (password.length < 7) {
+      toast.warning("Password must be at least 7 numbers");
+      return;
+    }
+
+    // التحقق من الاسم
+    if (name.length < 3) {
+      toast.warning("Name must be at least 3 characters");
+      return;
+    }
+
+    try {
+      const usersRef = collection(db, "users");
+
+      // التحقق من وجود الإيميل بالفعل
+      const q = query(usersRef, where("email", "==", email));
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) {
+        toast.error("Email Already Exist");
+        return;
+      }
+
+      // تشفير الباسورد
+      const hashedPassword = bcrypt.hashSync(password, 10);
+
+      // إنشاء المستخدم
+      const newUser = {
+        name,
+        email,
+        number,
+        password: hashedPassword,
+        role: "client",
+        createdAt: new Date(),
+      };
+
+      await addDoc(usersRef, newUser);
+
+      toast.success("Create Success");
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration Error:", error);
+      toast.error("حدث خطأ أثناء التسجيل");
+    }
+  };
 
 
   return (

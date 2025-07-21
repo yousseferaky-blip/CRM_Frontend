@@ -1,29 +1,39 @@
-import { toast } from 'react-toastify'
-import { useEffect, useState } from 'react'
-import { confirmAlert } from 'react-confirm-alert'
-import 'react-confirm-alert/src/react-confirm-alert.css'
-import './Users.css'
+import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
+import { confirmAlert } from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import './Users.css';
 
-import UsersTable from '../../Component/Users/UsersTable'
-import UserView from '../../Component/Users/UserView'
-import UserEdit from '../../Component/Users/UsersEdit'
-import { useTranslation } from 'react-i18next'
+import UsersTable from '../../Component/Users/UsersTable';
+import UserView from '../../Component/Users/UserView';
+import UserEdit from '../../Component/Users/UsersEdit';
+import { useTranslation } from 'react-i18next';
+
+import { db } from '../../firebase'; // مسار firebase.js
+import { collection, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [view, setView] = useState(null);
   const [editUser, setEditUser] = useState(null);
-  const {t} = useTranslation()
+  const { t } = useTranslation();
+
+  // جلب البيانات من Firestore
   useEffect(() => {
-    try {
-      const data = JSON.parse(localStorage.getItem("crm_users")) || [];
-      if (Array.isArray(data)) setUsers(data);
-    } catch (err) {
-      console.error("Invalid JSON in localStorage");
-      setUsers([]);
-    }
+    const fetchUsers = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "users"));
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        toast.error("Error loading users ❌");
+      }
+    };
+    fetchUsers();
   }, []);
 
+  // حذف مستخدم
   const handleDelete = (id) => {
     confirmAlert({
       title: 'Confirm to delete',
@@ -31,10 +41,15 @@ const Users = () => {
       buttons: [
         {
           label: 'Yes',
-          onClick: () => {
-            const updated = users.filter((u) => u.id !== id);
-            setUsers(updated);
-            localStorage.setItem("crm_users", JSON.stringify(updated));
+          onClick: async () => {
+            try {
+              await deleteDoc(doc(db, "users", id));
+              setUsers(users.filter(user => user.id !== id));
+              toast.success("User deleted successfully");
+            } catch (error) {
+              console.error("Error deleting user:", error);
+              toast.error("Error deleting user");
+            }
           }
         },
         { label: 'No' }
@@ -42,12 +57,20 @@ const Users = () => {
     });
   };
 
-  const handleSaveEdit = () => {
-    const updated = users.map((u) => u.id === editUser.id ? editUser : u);
-    setUsers(updated);
-    localStorage.setItem("crm_users", JSON.stringify(updated));
-    toast.success("User updated");
-    setEditUser(null);
+  // تعديل مستخدم
+  const handleSaveEdit = async () => {
+    try {
+      const userRef = doc(db, "users", editUser.id);
+      const { id, ...userData } = editUser;
+      await updateDoc(userRef, userData);
+
+      setUsers(users.map((u) => u.id === editUser.id ? editUser : u));
+      toast.success("User updated");
+      setEditUser(null);
+    } catch (error) {
+      console.error("Error updating user:", error);
+      toast.error("Failed to update user");
+    }
   };
 
   return (
@@ -71,7 +94,6 @@ const Users = () => {
           onCancel={() => setEditUser(null)}
         />
       )}
-
     </div>
   );
 };

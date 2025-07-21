@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from "react";
-import "./Employee.css"; // تأكد فيه CSS للمودال
+import "./Employee.css";
 import { useTranslation } from "react-i18next";
+import { db } from "../../firebase";
+import { collection, getDocs, updateDoc, doc } from "firebase/firestore";
 
 const AssignClients = () => {
   const [employees, setEmployees] = useState([]);
   const [clients, setClients] = useState([]);
   const [clientsByEmp, setClientsByEmp] = useState({});
   const [selectedClient, setSelectedClient] = useState(null);
-  const [showModal, setShowModal] = useState(false); 
-  const {t} = useTranslation()
+  const [showModal, setShowModal] = useState(false);
+  const { t } = useTranslation();
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  const fetchData = () => {
-    const users = JSON.parse(localStorage.getItem("crm_users")) || [];
+  const fetchData = async () => {
+    const querySnapshot = await getDocs(collection(db, "users"));
+    const users = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
     const emps = users.filter((u) => u.role === "employee");
     const allClients = users.filter((u) => u.role === "client");
 
@@ -30,25 +35,26 @@ const AssignClients = () => {
     setClientsByEmp(groupedClients);
   };
 
-  const assignClientToEmp = (emp, clientId) => {
-    const users = JSON.parse(localStorage.getItem("crm_users")) || [];
-    const updatedUsers = users.map((user) =>
-      user.id === clientId ? { ...user, assignedTo: emp.name } : user
-    );
-    localStorage.setItem("crm_users", JSON.stringify(updatedUsers));
-    fetchData();
+  const assignClientToEmp = async (emp, clientId) => {
+    try {
+      const clientRef = doc(db, "users", clientId);
+      await updateDoc(clientRef, { assignedTo: emp.name });
+      fetchData(); 
+    } catch (err) {
+      console.error("Error assigning client:", err);
+    }
   };
 
   return (
     <div className="users_container">
-      <h2 className="users_title">{t("employees-list")}</h2>
+      <h2 className="users_title">{t("employees-list")}ss</h2>
 
       <table className="users_table">
         <thead>
           <tr>
             <th>{t("dashboard-employee")}</th>
             <th>{t("dashboard-table-e")}</th>
-           <th>{t("dashboard-table-assignedClient")}</th>
+            <th>{t("dashboard-table-assignedClient")}</th>
             <th>{t("dashboard-table-assignedClients")}</th>
           </tr>
         </thead>
@@ -61,11 +67,11 @@ const AssignClients = () => {
                 <select
                   defaultValue=""
                   onChange={(e) =>
-                    assignClientToEmp(emp, parseInt(e.target.value))
+                    assignClientToEmp(emp, e.target.value)
                   }
                 >
                   <option value="" disabled>
-                     Chose Client 
+                    Chose Client
                   </option>
                   {clients
                     .filter((c) => !c.assignedTo || c.assignedTo === emp.name)
@@ -102,7 +108,6 @@ const AssignClients = () => {
           ))}
         </tbody>
       </table>
-
 
       {showModal && selectedClient && (
         <div className="modal">

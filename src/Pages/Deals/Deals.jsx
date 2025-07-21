@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import "./Deals.css";
 import { toast } from "react-toastify";
-import { BotOff, DnaOff, Eye, Pen, TimerOff, TimerReset, Trash } from "lucide-react";
+import {  Eye, Loader2, Pen, Trash } from "lucide-react";
 import { confirmAlert } from "react-confirm-alert";
-import { string } from "prop-types";
 import { useTranslation } from "react-i18next";
-
+import { db } from "../../firebase";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc
+} from "firebase/firestore";
 const Deals = () => {
   const [deals, setDeals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,98 +29,117 @@ const Deals = () => {
   const {t} = useTranslation()
 
   const users = JSON.parse(localStorage.getItem("crm_users")) || [];
-  const client = users.filter((u) => u.role === "client");
-  const employee = users.filter((u) => u.role === "employee");
+  const [client, setClient] = useState([]);
+  const [employee, setEmployee] = useState([]);
 
-  useEffect(() => {
-    const getDeals = JSON.parse(localStorage.getItem("deals")) || [];
-    setDeals(getDeals);
-    setLoading(false);
-  }, []);
-  
-  const AddNewDeal = (e) => {
-    e.preventDefault();
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const dealsSnapshot = await getDocs(collection(db, "deals"));
 
-    if (!title.trim()) {
-      toast.error("يرجى إدخال عنوان الصفقة");
-      return;
+      const usersData = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const dealsData = dealsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      setDeals(dealsData);
+      setClient(usersData.filter((u) => u.role === "client"));
+      setEmployee(usersData.filter((u) => u.role === "employee"));
+    } catch (err) {
+      console.error("Error loading data:", err);
+    } finally {
+      setLoading(false);
     }
-    if (!clientName) {
-      toast.error("يرجى اختيار العميل");
-      return;
-    }
-    if (!employeeName) {
-      toast.error("يرجى اختيار الموظف");
-      return;
-    }
-    if (!value || parseFloat(value) <= 0) {
-      toast.error("يرجى إدخال قيمة الصفقة بشكل صحيح");
-      return;
-    }
+  };
 
-    const NewDeal = {
-      id: Date.now(),
-      title,
-      clientId: clientName,
-      employeeId: employeeName,
-      value,
-      status,
-      date ,
-    };
+  fetchData();
+}, []);
 
-    const updateDeal = [...deals, NewDeal];
-    localStorage.setItem("deals", JSON.stringify(updateDeal));
-    setDeals(updateDeal);
+  const AddNewDeal = async (e) => {
+  e.preventDefault();
 
+  if (!title.trim() || !clientName || !employeeName || !value || parseFloat(value) <= 0) {
+    toast.error("يرجى ملء جميع الحقول بشكل صحيح");
+    return;
+  }
+
+  const newDeal = {
+    title,
+    clientId: clientName,
+    employeeId: employeeName,
+    value,
+    status,
+    date,
+  };
+
+  try {
+    await addDoc(collection(db, "deals"), newDeal);
+    toast.success("تمت إضافة الصفقة بنجاح");
+    setShowModal(false);
     setTitle("");
     setClientName("");
     setEmployeeName("");
     setValue("");
     setStatus("in-progress");
-    setShowModal(false);
+    setDate("");
+    // إعادة تحميل الصفقات
+    const snapshot = await getDocs(collection(db, "deals"));
+    const updated = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setDeals(updated);
+  } catch (err) {
+    console.error(err);
+    toast.error("حدث خطأ أثناء إضافة الصفقة");
+  }
+};
 
-    toast.success(" Added Deal ")
-  };
 
-  const handleDelete = (id) => {
-    confirmAlert({
-      title: "تأكيد الحذف",
-      message: "هل أنت متأكد أنك تريد حذف هذه الصفقة؟",
-      buttons: [
-        {
-          label: "نعم، احذف",
-          onClick: () => {
-            const filteredDeals = deals.filter((deal) => deal && deal.id !== id); 
-            setDeals(filteredDeals);
-            localStorage.setItem("deals", JSON.stringify(filteredDeals));
+ const handleDelete = (id) => {
+  confirmAlert({
+    title: "تأكيد الحذف",
+    message: "هل أنت متأكد أنك تريد حذف هذه الصفقة؟",
+    buttons: [
+      {
+        label: "نعم، احذف",
+        onClick: async () => {
+          try {
+            await deleteDoc(doc(db, "deals", id));
             toast.success("تم حذف الصفقة بنجاح");
-          },
+
+            const snapshot = await getDocs(collection(db, "deals"));
+            const updated = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setDeals(updated);
+          } catch (err) {
+            console.error(err);
+            toast.error("فشل في حذف الصفقة");
+          }
         },
-        {
-          label: "إلغاء",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
+      },
+      {
+        label: "إلغاء",
+        onClick: () => {},
+      },
+    ],
+  });
+};
 
-  const updateDeal = () => {
-    if (!editDeal || !editDeal.id) {
-      toast.error("حدث خطأ: بيانات الصفقة غير صالحة");
-      return;
-    }
 
-    const updatedDeals = deals.map((d) => {
-      if (!d || !d.id) return d; 
+  const updateDeal = async () => {
+  if (!editDeal || !editDeal.id) return;
 
-      return String(d.id) === String(editDeal.id) ? editDeal : d;
-    });
-
-    setDeals(updatedDeals);
-    localStorage.setItem("deals", JSON.stringify(updatedDeals));
+  try {
+    const dealRef = doc(db, "deals", editDeal.id);
+    await updateDoc(dealRef, editDeal);
     toast.success("تم تحديث الصفقة بنجاح");
     setEditDeal(null);
-  };
+
+    const snapshot = await getDocs(collection(db, "deals"));
+    const updated = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setDeals(updated);
+  } catch (err) {
+    console.error(err);
+    toast.error("خطأ أثناء التحديث");
+  }
+};
+
 
 
 
@@ -127,7 +153,7 @@ const Deals = () => {
       </div>
 
       {loading ? (
-        <p>جارٍ التحميل...</p>
+        <p><Loader2 /></p>
       ) : (
         <table className="deals-table">
           <thead>
@@ -145,14 +171,14 @@ const Deals = () => {
 
             {deals.map((deal) => {
               if (!deal) return null; 
-              const clientData = users.find((u) => String(u.id) === String(deal.clientId));
-              const employeeData = users.find((u) => String(u.id) === String(deal.employeeId));
+              const clientData = client.find((u) => u.id === deal.clientId);
+              const employeeData = employee.find((u) => u.id === deal.employeeId);
 
-              return (
+                return (
                 <tr key={deal.id}>
                   <td>{deal.title}</td>
-                  <td>{clientData?.name }</td>
-                  <td>{employeeData?.name }</td>
+                   <td>{clientData?.name || "غير معروف"}</td>
+                   <td>{employeeData?.name || "غير معروف"}</td>
                   <td>{deal.value}$</td>
                   <td>{deal.date}</td>
                   <td>{deal.status}</td>

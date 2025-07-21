@@ -126,7 +126,6 @@
 
 /* VIEW VIEW VIEW */
 .view_card {
-  margin-top: 50px;
   padding: 20px;
   background: white;
   border: 1px solid var(--border);
@@ -135,8 +134,8 @@
   width: 100%;
   max-width: 500px;
   transition: all 0.3s ease;
-  position: absolute;
-  top: 50%;
+  position: fixed;
+  top: 40%;
   left: 50%;
   transform: translate(-50%,-50%);
 }

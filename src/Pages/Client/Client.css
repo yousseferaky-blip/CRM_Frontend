@@ -1,0 +1,55 @@
+.users_container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.users_title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.table_wrapper {
+  overflow-x: auto;
+}
+
+.users_table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.users_table th,
+.users_table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.assign_select {
+  padding: 6px 10px;
+  margin-right: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.pdf_btn {
+  padding: 6px 12px;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pdf_btn:hover {
+  background-color: #084298;
+}
+
+.no_data {
+  text-align: center;
+  font-style: italic;
+  color: #777;
+}

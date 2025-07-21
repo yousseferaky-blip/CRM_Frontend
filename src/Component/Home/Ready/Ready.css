@@ -1,0 +1,27 @@
+.ready{
+    text-align: center;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    padding: 80px 0;
+}
+.ready h2{
+    font-size: clamp(18px,4vw,48px);
+}
+.ready p {
+    font-size: clamp(16px,2vw,32px);
+    width: 80%;
+    margin: 10px auto;
+}
+.ready button{
+    background: var(--muted);
+    color: var(--primary);
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.ready button:hover{
+    background: var(--secondary);
+}

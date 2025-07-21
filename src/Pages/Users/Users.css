@@ -1,0 +1,229 @@
+.users_container {
+  padding: 20px;
+  background: var(--background);
+  font-family: var(--font-main);
+  position: relative;
+}
+
+.users_title {
+  font-size: 24px;
+  color: var(--foreground);
+  margin-bottom: 20px;
+}
+
+.table_wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.users_table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.users_table th,
+.users_table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.users_table thead {
+  background: var(--muted);
+}
+
+.users_table tbody tr:hover {
+  background: var(--muted);
+}
+
+.role_badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.role_badge.admin {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.role_badge.employee {
+  background: var(--info);
+  color: white;
+}
+
+.role_badge.client {
+  background: var(--success);
+  color: white;
+}
+
+.no_data {
+  text-align: center;
+  padding: 20px;
+  color: var(--muted-foreground);
+}
+
+.actions_cell {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn_view {
+  background: var(--info);
+  color: white;
+}
+
+.btn_edit {
+  background: var(--warning);
+  color: white;
+}
+
+.btn_delete {
+  background: var(--danger);
+  color: white;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+
+/* ✅ Responsive adjustments */
+@media (max-width: 600px) {
+  .users_title {
+    font-size: 20px;
+    text-align: center;
+  }
+
+  .btn {
+    padding: 5px 8px;
+    font-size: 10px;
+  }
+
+  .actions_cell {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+/* VIEW VIEW VIEW */
+.view_card {
+  margin-top: 50px;
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 500px;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.view_title {
+  font-size: 20px;
+  color: var(--foreground);
+  margin-bottom: 15px;
+}
+
+.view_row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: var(--muted-foreground);
+}
+
+.view_row span {
+  color: var(--foreground);
+}
+
+.close_btn {
+  margin-top: 15px;
+  background: var(--danger);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.close_btn:hover {
+  background: #dc2626;
+}
+
+/* VIEW VIEW VIEW VIEW VIEW */
+.view_card {
+  margin-top: 80px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.view_title {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+  font-weight: bold;
+}
+
+.view_row {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.view_row strong {
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 14px;
+}
+
+.view_row input,
+.view_row select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.view_row input:focus,
+.view_row select:focus {
+  border-color: #007bff;
+}
+
+.btn_save {
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  margin-right:  20px;  
+}   

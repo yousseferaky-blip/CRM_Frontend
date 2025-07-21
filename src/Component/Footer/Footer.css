@@ -1,0 +1,22 @@
+footer{
+    padding: 50px 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+    text-align: start;
+}
+.footer_cart{
+    margin: 10px ;
+}
+.footer_cart p{
+    margin-top: 20px;
+     color: var(--muted-foreground);
+}
+.footer_cart ul{
+    list-style: none;
+}
+.footer_cart ul li{
+     color: var(--muted-foreground);
+}
+
+
+

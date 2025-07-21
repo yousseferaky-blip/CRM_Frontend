@@ -1,0 +1,68 @@
+.sidebar_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3); 
+  z-index: 8;
+  backdrop-filter: blur(1px);
+}
+.aside{
+    z-index:9 ;
+    position: absolute;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 260px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    padding: 20px 10px;
+    transition: all 0.3s ease;
+}
+.aside.activeSidebar{
+    left: 0;
+    position: fixed;
+}
+.aside_Container{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.aside_Container_Top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid  var(--border);
+    padding-bottom: 20px;
+}
+.aside_Container_Top_x{
+    cursor: pointer;
+     color: var(--primary);
+}
+.aside_Container_Top_x:hover{
+    color: var(--warning);
+}
+
+.aside_Container_links{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.aside_link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--secondary-foreground);
+  padding: 10px ;
+  border-radius: var(--radius);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+.aside_link.active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+}

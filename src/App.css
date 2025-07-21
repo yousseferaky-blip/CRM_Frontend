@@ -1,0 +1,63 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-main);
+  scroll-behavior: smooth;
+}
+body{
+  overflow-x: hidden;
+}
+:root {
+  --background: #f9fafb;
+  --foreground: #111827;
+  --primary: #2563eb; 
+  --primary-foreground: #ffffff;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #1e293b;
+  --muted: #f1f5f9;
+  --muted-foreground: #6b7280;
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #ef4444;
+  --info: #3b82f6;
+  --border: #d1d5db;
+  --radius: 12px;
+
+  --font-main: "Segoe UI", sans-serif;
+}
+
+
+.dark {
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #e2e8f0;
+  --muted: #334155;
+  --muted-foreground: #94a3b8;
+  --success: #22c55e;
+  --warning: #facc15;
+  --danger: #ef4444;
+  --info: #60a5fa;
+  --border: #334155;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-main);
+  line-height: 1.6;
+}
+
+.feature_grid div:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 2px 10px var(--foreground);
+}

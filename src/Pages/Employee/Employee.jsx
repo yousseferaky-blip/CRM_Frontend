@@ -47,68 +47,69 @@ const AssignClients = () => {
 
   return (
     <div className="users_container">
-      <h2 className="users_title">{t("employees-list")}ss</h2>
+      <h2 className="users_title">{t("employees-list")}</h2>
 
-      <table className="users_table">
-        <thead>
-          <tr>
-            <th>{t("dashboard-employee")}</th>
-            <th>{t("dashboard-table-e")}</th>
-            <th>{t("dashboard-table-assignedClient")}</th>
-            <th>{t("dashboard-table-assignedClients")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {employees.map((emp) => (
-            <tr key={emp.id}>
-              <td>{emp.name}</td>
-              <td>{emp.email}</td>
-              <td>
-                <select
-                  defaultValue=""
-                  onChange={(e) =>
-                    assignClientToEmp(emp, e.target.value)
-                  }
-                >
-                  <option value="" disabled>
-                    Chose Client
-                  </option>
-                  {clients
-                    .filter((c) => !c.assignedTo || c.assignedTo === emp.name)
-                    .map((client) => (
-                      <option key={client.id} value={client.id}>
-                        {client.name}
+    <div className="table_wrapper">
+          <table className="users_table">
+            <thead>
+              <tr>
+                <th>{t("dashboard-employee")}</th>
+                <th>{t("dashboard-table-e")}</th>
+                <th>{t("dashboard-table-assignedClient")}</th>
+                <th>{t("dashboard-table-assignedClients")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {employees.map((emp) => (
+                <tr key={emp.id}>
+                  <td>{emp.name}</td>
+                  <td>{emp.email}</td>
+                  <td>
+                    <select
+                      defaultValue=""
+                      onChange={(e) =>
+                        assignClientToEmp(emp, e.target.value)
+                      }
+                    >
+                      <option value="" disabled>
+                        Chose Client
                       </option>
-                    ))}
-                </select>
-              </td>
-              <td>
-                {clientsByEmp[emp.id]?.length > 0 ? (
-                  <ul>
-                    {clientsByEmp[emp.id].map((client) => (
-                      <li key={client.id}>
-                        {client.name}{" "}
-                        <button
-                          className="btn_show"
-                          onClick={() => {
-                            setSelectedClient(client);
-                            setShowModal(true);
-                          }}
-                        >
-                          {t("show")}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <span style={{ color: "gray" }}>لا يوجد عملاء</span>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
+                      {clients
+                        .filter((c) => !c.assignedTo || c.assignedTo === emp.name)
+                        .map((client) => (
+                          <option key={client.id} value={client.id}>
+                            {client.name}
+                          </option>
+                        ))}
+                    </select>
+                  </td>
+                  <td>
+                    {clientsByEmp[emp.id]?.length > 0 ? (
+                      <ul>
+                        {clientsByEmp[emp.id].map((client) => (
+                          <li key={client.id}>
+                            {client.name}{" "}
+                            <button
+                              className="btn_show"
+                              onClick={() => {
+                                setSelectedClient(client);
+                                setShowModal(true);
+                              }}
+                            >
+                              {t("show")}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span style={{ color: "gray" }}>لا يوجد عملاء</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+    </div>
       {showModal && selectedClient && (
         <div className="modal">
           <div className="modal-content">

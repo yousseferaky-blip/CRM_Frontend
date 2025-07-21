@@ -114,44 +114,46 @@ const Tasks = () => {
         <h2>{t("dashboard-tasks")}</h2>
         <button onClick={() => setShowModal(true)} className="add-btn">+ {t("dashboard-add")}</button>
       </div>
-
-      <table className="deals-table">
-        <thead>
-          <tr>
-            <th>{t("dashboard-table-t")}</th>
-            <th>{t("dashboard-table-d")}</th>
-            <th>{t("dashboard-employee")}</th>
-            <th>{t("dashboard-client")}</th>
-            <th>{t("dashboard-table-s")}</th>
-            <th>{t("dashboard-table-p")}</th>
-            <th>{t("dashboard-table-S")}</th>
-            <th>{t("dashboard-table-a")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => {
-            const cd = client.find((u) => u.id === task.clientId);
-            const ed = employee.find((u) => u.id === task.employeeId);
-            return (
-              <tr key={task.id}>
-                <td>{task.title}</td>
-                <td>{task.dis}</td>
-                <td>{ed?.name || "غير معروف"}</td>
-                <td>{cd?.name || "غير معروف"}</td>
-                <td>{task.date}</td>
-                <td>{task.priority}</td>
-                <td>{task.status}</td>
-                <td>
-                  <button onClick={() => handleDelete(task.id)} className="btn btn-delete"><Trash size={14}/></button>
-                  <button onClick={() => setSelectedTask(task)} className="btn btn-view"><Eye size={14}/></button>
-                  <button onClick={() => setEditTask(task)} className="btn btn-edit"><Pen size={14}/></button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-
+      
+      <div className="table_wrapper">
+            <table className="deals-table">
+              <thead>
+                <tr>
+                  <th>{t("dashboard-table-t")}</th>
+                  <th>{t("dashboard-table-d")}</th>
+                  <th>{t("dashboard-employee")}</th>
+                  <th>{t("dashboard-client")}</th>
+                  <th>{t("dashboard-table-s")}</th>
+                  <th>{t("dashboard-table-p")}</th>
+                  <th>{t("dashboard-table-S")}</th>
+                  <th>{t("dashboard-table-a")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task) => {
+                  const cd = client.find((u) => u.id === task.clientId);
+                  const ed = employee.find((u) => u.id === task.employeeId);
+                  return (
+                    <tr key={task.id}>
+                      <td>{task.title}</td>
+                      <td>{task.dis}</td>
+                      <td>{ed?.name || "غير معروف"}</td>
+                      <td>{cd?.name || "غير معروف"}</td>
+                      <td>{task.date}</td>
+                      <td>{task.priority}</td>
+                      <td>{task.status}</td>
+                      <td>
+                        <button onClick={() => handleDelete(task.id)} className="btn btn-delete"><Trash size={14}/></button>
+                        <button onClick={() => setSelectedTask(task)} className="btn btn-view"><Eye size={14}/></button>
+                        <button onClick={() => setEditTask(task)} className="btn btn-edit"><Pen size={14}/></button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+      </div>
+      
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">

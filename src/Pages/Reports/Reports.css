@@ -27,8 +27,6 @@
 }
 
 .stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
 }
@@ -60,15 +58,30 @@
   border-radius: var(--radius);
   border: 1px solid var(--border);
 }
+.stats,
+.top-section,
+.summary-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
 .small-chart canvas {
-  max-width: 300px;
-  max-height: 300px;
-  margin: 0 auto;
+  width: 100% !important;
+  height: auto !important;
+}
+.small-chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.chart-section .chart {
+  width: 100%;
+   max-width: 600px; 
+  margin: auto;
+  overflow-x: auto;
 }
 
 .top-section {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
   margin-bottom: 32px;
 }
@@ -116,7 +129,7 @@
   font-size: 16px;
 }
 
-/* ✅ نسبة النجاح */
+
 .success-rate {
   background-color: var(--muted);
   color: var(--foreground);
@@ -129,7 +142,7 @@
   margin-bottom: 32px;
 }
 
-/* 📋 ملخص الأرباح الشهرية */
+
 .summary-section {
   background-color: var(--muted);
   padding: 24px;
@@ -146,8 +159,6 @@
 }
 
 .summary-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
 }
 
@@ -160,7 +171,6 @@
   color: var(--foreground);
 }
 
-/* 🔍 فلتر التاريخ */
 .filter-section {
   margin-bottom: 24px;
   display: flex;
@@ -182,7 +192,7 @@
   color: var(--foreground);
 }
 
-/* Responsive */
+
 @media (max-width: 768px) {
   .stats {
     grid-template-columns: 1fr;
@@ -249,5 +259,25 @@
 
   .filter-section input[type="date"] {
     width: 100%;
+  }
+   .reports-container {
+    padding: 20px;
+  }
+
+  .card {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .top-section li,
+  .reports-container > div:last-child li {
+    font-size: 15px;
+    padding: 8px;
+  }
+
+  .chart-section h3,
+  .top-section h3,
+  .summary-section h3 {
+    font-size: 18px;
   }
 }

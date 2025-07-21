@@ -155,62 +155,64 @@ useEffect(() => {
       {loading ? (
         <p><Loader2 /></p>
       ) : (
-        <table className="deals-table">
-          <thead>
-            <tr>
-              <th>{t("dashboard-table-t")}</th>
-              <th>{t("dashboard-client")}</th>
-              <th>{t("dashboard-employee")}</th>
-              <th>{t("dashboard-table-v")}</th>
-              <th>{t("dashboard-table-s")}</th>
-              <th>{t("dashboard-table-S")}</th>
-              <th>{t("dashboard-table-a")}</th>
-            </tr>
-          </thead>
-          <tbody>
+        <div className="table_wrapper">
+          <table className="deals-table">
+            <thead>
+              <tr>
+                <th>{t("dashboard-table-t")}</th>
+                <th>{t("dashboard-client")}</th>
+                <th>{t("dashboard-employee")}</th>
+                <th>{t("dashboard-table-v")}</th>
+                <th>{t("dashboard-table-s")}</th>
+                <th>{t("dashboard-table-S")}</th>
+                <th>{t("dashboard-table-a")}</th>
+              </tr>
+            </thead>
+            <tbody>
 
-            {deals.map((deal) => {
-              if (!deal) return null; 
-              const clientData = client.find((u) => u.id === deal.clientId);
-              const employeeData = employee.find((u) => u.id === deal.employeeId);
+              {deals.map((deal) => {
+                if (!deal) return null; 
+                const clientData = client.find((u) => u.id === deal.clientId);
+                const employeeData = employee.find((u) => u.id === deal.employeeId);
 
-                return (
-                <tr key={deal.id}>
-                  <td>{deal.title}</td>
-                   <td>{clientData?.name || "غير معروف"}</td>
-                   <td>{employeeData?.name || "غير معروف"}</td>
-                  <td>{deal.value}$</td>
-                  <td>{deal.date}</td>
-                  <td>{deal.status}</td>
-                  <td>
-                    <button
-                      onClick={() => handleDelete(deal.id)}
-                       className="btn btn-delete"
-                    >
-                      <Trash size={14}/>
-                    </button>
-                    <button
-                      className="btn btn-view"
-                      onClick={() => {
-                        setSelectedDeal(deal);
-                        setView(true);
-                    }}
-                    >
-                      <Eye size={14}/>
-                    </button>
-                    <button
-                       className="btn btn-edit"
-                       onClick={() => setEditDeal(deal)}
-                    >
-                      <Pen size={14}/>
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+                  return (
+                  <tr key={deal.id}>
+                    <td>{deal.title}</td>
+                    <td>{clientData?.name || "غير معروف"}</td>
+                    <td>{employeeData?.name || "غير معروف"}</td>
+                    <td>{deal.value}$</td>
+                    <td>{deal.date}</td>
+                    <td>{deal.status}</td>
+                    <td>
+                      <button
+                        onClick={() => handleDelete(deal.id)}
+                        className="btn btn-delete"
+                      >
+                        <Trash size={14}/>
+                      </button>
+                      <button
+                        className="btn btn-view"
+                        onClick={() => {
+                          setSelectedDeal(deal);
+                          setView(true);
+                      }}
+                      >
+                        <Eye size={14}/>
+                      </button>
+                      <button
+                        className="btn btn-edit"
+                        onClick={() => setEditDeal(deal)}
+                      >
+                        <Pen size={14}/>
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
 
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+         </div>
       )}
 
       {showModal && (

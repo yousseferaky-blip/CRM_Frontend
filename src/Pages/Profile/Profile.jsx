@@ -67,7 +67,7 @@ const Profile = () => {
     const progresD = deals.length > 0 ? Math.round((completedD / deals.length) * 100) : 0;
     
     const completedT = tasks.filter(task => task?.status === "won").length;
-    const progresT = deals.length > 0 ? Math.round((completedT / deals.length) * 100) : 0;
+    const progresT = deals.length > 0 ? Math.round((completedT / tasks.length) * 100) : 0;
 
  const handleDownloadPDF = () => {
     const input = document.getElementById("report-content");

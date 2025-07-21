@@ -18,7 +18,7 @@ const Users = () => {
   const [editUser, setEditUser] = useState(null);
   const { t } = useTranslation();
 
-  // جلب البيانات من Firestore
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -33,7 +33,7 @@ const Users = () => {
     fetchUsers();
   }, []);
 
-  // حذف مستخدم
+
   const handleDelete = (id) => {
     confirmAlert({
       title: 'Confirm to delete',
@@ -57,7 +57,7 @@ const Users = () => {
     });
   };
 
-  // تعديل مستخدم
+
   const handleSaveEdit = async () => {
     try {
       const userRef = doc(db, "users", editUser.id);

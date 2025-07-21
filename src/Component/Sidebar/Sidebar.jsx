@@ -13,7 +13,7 @@ import {
 import "./Sidebar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { AuthContext } from "../../context/UserContext";
+import { AuthContext } from "../../Context/UserContext";
 import { useTranslation } from "react-i18next";
 
 const Sidebar = ({ activeSidebar, setActiveSidebar }) => {

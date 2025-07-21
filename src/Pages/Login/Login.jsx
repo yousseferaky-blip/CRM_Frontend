@@ -43,7 +43,7 @@ const Login = () => {
       <h3 className='login_title'>{t("welcome_back")} </h3>
       <p className='login_subtitle'>{t("choose_role")} </p>
       <span className="tryS">{t("try")}</span>
-      <p className='tryE'>Admin@gmail.com</p>
+      <p className='tryE'>admin@gmail.com</p>
       <p className='tryP'>123456789 </p>
 
       <form className='login_form'>

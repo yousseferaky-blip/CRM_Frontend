@@ -54,7 +54,7 @@ const Register = () => {
             email,
             number,
             password:hashedPassword,
-            role: "admin"
+            role: "client"
         }
         users.push(newUser)
         localStorage.setItem("crm_users",JSON.stringify(users))

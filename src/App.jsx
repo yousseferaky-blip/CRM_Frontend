@@ -1,3 +1,4 @@
+import { useEffect,useContext } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import PublicLayout from  './Layouts/PublicLayout/PublicLayout'
@@ -14,8 +15,19 @@ import ProtectedRoute from './Layouts/ProtectedRoute/ProtectedRoute'
 import Tasks from './Pages/Tasks/Tasks'
 import Reports from './Pages/Reports/Reports'
 import Profile from './Pages/Profile/Profile'
+import { AuthContext } from './Context/UserContext'
 
 function App() {
+    const {logout } = useContext(AuthContext)
+
+   useEffect(() => {
+    const firstTime = sessionStorage.getItem("first_visit");
+    if (!firstTime) {
+      logout(); 
+      sessionStorage.setItem("first_visit", "true");
+    }
+  }, []);
+  
 
   return (
     <>
